@@ -326,7 +326,7 @@
       <li><a href="#work">Work</a></li>
       <li><a href="#interests">Interests</a></li>
       <li><a href="#recs">Recs</a></li>
-      <li><a href="#game">Blackjack</a></li>
+      <li><a href="#games">Arcade</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
@@ -666,13 +666,263 @@
 
   <div class="section-divider"></div>
 
-  <!-- GAME -->
-  <section id="game" style="background: var(--bg);">
-    <p class="section-label fade-up">Play a hand</p>
-    <h2 class="section-title fade-up">Blackjack</h2>
-    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:2rem;max-width:500px;" class="fade-up">
-      Since you made it this far, let's play. Standard rules — dealer stands on 17. Playing for pride.
-    </p>
+  <!-- ARCADE -->
+  <section id="games" style="background: var(--bg);">
+    <p class="section-label fade-up">The Arcade</p>
+    <h2 class="section-title fade-up">Games</h2>
+
+    <style>
+      .arcade-tabs {
+        display: flex; flex-wrap: wrap; gap: 0.4rem;
+        margin-bottom: 2.5rem; border-bottom: 1px solid var(--border);
+        padding-bottom: 0;
+      }
+      .arcade-tab {
+        background: transparent; border: none; border-bottom: 2px solid transparent;
+        color: var(--muted); font-family: 'JetBrains Mono', monospace;
+        font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+        padding: 0.6rem 1.2rem; cursor: pointer;
+        transition: color 0.2s, border-color 0.2s;
+        margin-bottom: -1px;
+      }
+      .arcade-tab:hover { color: var(--text); }
+      .arcade-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+      .arcade-panel { display: none; max-width: 600px; }
+      .arcade-panel.active { display: block; }
+
+      /* ── shared game styles ── */
+      .g-label {
+        font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+        letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase;
+        margin-bottom: 0.6rem;
+      }
+      .g-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.7; margin-bottom: 1.8rem; }
+      .g-desc a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-dim); }
+      .g-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
+      .g-btn {
+        padding: 0.6rem 1.6rem; border: 1px solid var(--gold); background: transparent;
+        color: var(--gold); font-family: 'Inter', sans-serif; font-size: 0.78rem;
+        letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+      }
+      .g-btn:hover:not(:disabled) { background: var(--gold); color: var(--bg); }
+      .g-btn:disabled { opacity: 0.3; cursor: default; border-color: var(--border); color: var(--muted); }
+      .g-btn.ghost { border-color: var(--border); color: var(--muted); }
+      .g-btn.ghost:hover:not(:disabled) { background: var(--bg3); color: var(--text); }
+      .g-result { font-family: 'Playfair Display', serif; font-size: 1.4rem; min-height: 2rem; margin-bottom: 1rem; }
+      .g-result.win  { color: var(--gold); }
+      .g-result.lose { color: #c0392b; }
+      .g-result.push { color: var(--muted); }
+      .g-record { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.08em; line-height: 1.9; }
+      .g-record span { color: var(--text); }
+
+      /* ── Blackjack ── */
+      .bj-hand { display: flex; flex-wrap: wrap; gap: 0.5rem; min-height: 88px; margin-bottom: 1.2rem; align-items: flex-start; }
+      .bj-card { width: 58px; height: 84px; background: var(--cream); border-radius: 5px; display: flex; flex-direction: column; justify-content: space-between; padding: 5px 6px; font-size: 0.9rem; font-weight: 700; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.5); color: #1a1a18; }
+      .bj-card.red { color: #c0392b; }
+      .bj-card.back { background: var(--bg3); border: 1px solid var(--border); justify-content: center; align-items: center; font-size: 1.4rem; color: var(--gold); }
+      .bj-card .suit-center { text-align: center; font-size: 1.3rem; }
+      .bj-score { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--cream); margin-bottom: 1.8rem; }
+      .bj-score span { color: var(--gold); }
+
+      /* ── Monty Hall ── */
+      .mh-doors { display: flex; gap: 1.2rem; margin-bottom: 2rem; }
+      .mh-door { flex: 1; aspect-ratio: 9/14; max-width: 160px; background: var(--bg3); border: 2px solid var(--border); border-radius: 6px 6px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: border-color 0.2s, transform 0.2s; font-size: 3rem; overflow: hidden; }
+      .mh-door:hover:not(.mh-door--locked) { border-color: var(--gold-dim); transform: translateY(-4px); }
+      .mh-door--picked { border-color: var(--gold); }
+      .mh-door--locked { cursor: default; }
+      .mh-door--open   { border-color: var(--border); }
+      .mh-door--win    { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+      .mh-door--lose   { border-color: #c0392b; background: rgba(192,57,43,0.06); }
+      .mh-door-num { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; position: absolute; bottom: 0.5rem; }
+      .mh-door-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; position: absolute; top: 0.5rem; opacity: 0; transition: opacity 0.3s; }
+      .mh-door--open .mh-door-label, .mh-door--win .mh-door-label, .mh-door--lose .mh-door-label { opacity: 1; }
+
+      /* ── Reaction Timer ── */
+      .rt-wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 1.6rem; }
+      .watch-outer {
+        width: 210px; height: 210px; border-radius: 50%;
+        background: conic-gradient(#1a1a1a 0deg, #2a2a2a 10deg, #1a1a1a 20deg, #2a2a2a 30deg, #1a1a1a 40deg, #2a2a2a 50deg, #1a1a1a 60deg, #2a2a2a 70deg, #1a1a1a 80deg, #2a2a2a 90deg, #1a1a1a 100deg, #2a2a2a 110deg, #1a1a1a 120deg, #2a2a2a 130deg, #1a1a1a 140deg, #2a2a2a 150deg, #1a1a1a 160deg, #2a2a2a 170deg, #1a1a1a 180deg, #2a2a2a 190deg, #1a1a1a 200deg, #2a2a2a 210deg, #1a1a1a 220deg, #2a2a2a 230deg, #1a1a1a 240deg, #2a2a2a 250deg, #1a1a1a 260deg, #2a2a2a 270deg, #1a1a1a 280deg, #2a2a2a 290deg, #1a1a1a 300deg, #2a2a2a 310deg, #1a1a1a 320deg, #2a2a2a 330deg, #1a1a1a 340deg, #2a2a2a 350deg, #1a1a1a 360deg);
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 0 3px #444, 0 6px 30px rgba(0,0,0,0.7);
+        position: relative; cursor: pointer;
+      }
+      .watch-case {
+        width: 188px; height: 188px; border-radius: 50%;
+        background: linear-gradient(135deg, #888 0%, #ccc 40%, #999 60%, #bbb 100%);
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);
+      }
+      .watch-dial {
+        width: 170px; height: 170px; border-radius: 50%;
+        background: #f5f0e8;
+        position: relative; overflow: hidden;
+        transition: background 0.15s;
+      }
+      .watch-dial.flash { background: #c9a84c; }
+      .watch-dial.flash-red { background: #e8354a; }
+      /* hour markers */
+      .watch-marker {
+        position: absolute; left: 50%; top: 6px;
+        width: 2px; height: 10px; background: #111;
+        transform-origin: 50% 79px; margin-left: -1px;
+      }
+      .watch-marker.thick { width: 3px; height: 14px; margin-left: -1.5px; }
+      /* subdials */
+      .watch-subdial {
+        position: absolute; border-radius: 50%;
+        background: #ddd8c8; border: 1px solid #bbb;
+      }
+      .sd-nine  { width: 38px; height: 38px; top: 50%; left: 22%; transform: translate(-50%,-50%); }
+      .sd-six   { width: 38px; height: 38px; top: 68%; left: 50%; transform: translate(-50%,-50%); }
+      .sd-three { width: 38px; height: 38px; top: 50%; left: 78%; transform: translate(-50%,-50%); }
+      /* hands */
+      .watch-hand { position: absolute; left: 50%; bottom: 50%; transform-origin: 50% 100%; border-radius: 2px 2px 0 0; }
+      .hand-hour  { width: 4px; height: 48px; background: #111; margin-left: -2px; }
+      .hand-min   { width: 3px; height: 62px; background: #111; margin-left: -1.5px; }
+      .hand-sec   { width: 1.5px; height: 72px; background: #c0392b; margin-left: -0.75px; }
+      .hand-sec::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 5px; height: 14px; background: #c0392b; border-radius: 2px; }
+      .watch-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 8px; height: 8px; border-radius: 50%; background: #c0392b; z-index: 10; }
+      .watch-logo { position: absolute; top: 38%; left: 50%; transform: translateX(-50%); font-family: 'Playfair Display', serif; font-size: 0.45rem; color: #555; letter-spacing: 0.15em; text-transform: uppercase; white-space: nowrap; }
+      .rt-best { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; margin-top: 0.4rem; }
+      .rt-best span { color: var(--gold); }
+
+      /* ── Bond Order ── */
+      .bond-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.6rem; }
+      .bond-item {
+        background: var(--bg3); border: 1px solid var(--border);
+        padding: 0.9rem 1.2rem; cursor: grab; display: flex;
+        align-items: center; gap: 1rem;
+        transition: border-color 0.2s, opacity 0.2s;
+        user-select: none;
+      }
+      .bond-item:active { cursor: grabbing; }
+      .bond-item.dragging { opacity: 0.4; border-color: var(--gold); }
+      .bond-item.drag-over { border-color: var(--gold-dim); background: var(--bg2); }
+      .bond-num { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--gold); min-width: 1.2rem; }
+      .bond-title { font-size: 0.9rem; color: var(--text); flex: 1; }
+      .bond-year { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--muted); }
+      .bond-item.correct { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+      .bond-item.wrong   { border-color: #c0392b; background: rgba(192,57,43,0.05); }
+
+      /* ── Vesper Quiz ── */
+      .quiz-q { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--cream); margin-bottom: 1.2rem; line-height: 1.5; }
+      .quiz-opts { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.4rem; }
+      .quiz-opt {
+        background: var(--bg3); border: 1px solid var(--border);
+        padding: 0.7rem 1rem; cursor: pointer; text-align: left;
+        color: var(--muted); font-size: 0.85rem;
+        transition: border-color 0.2s, color 0.2s;
+        font-family: 'Inter', sans-serif;
+      }
+      .quiz-opt:hover:not(:disabled) { border-color: var(--gold-dim); color: var(--text); }
+      .quiz-opt.correct { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.06); }
+      .quiz-opt.wrong   { border-color: #c0392b; color: #c0392b; }
+      .quiz-opt:disabled { cursor: default; }
+      .quiz-progress { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 1.4rem; }
+    </style>
+
+    <div class="arcade-tabs fade-up" id="arcade-tabs">
+      <button class="arcade-tab active" onclick="arcadeTab('rt')">Reaction Timer</button>
+      <button class="arcade-tab" onclick="arcadeTab('bj')">Blackjack</button>
+      <button class="arcade-tab" onclick="arcadeTab('mh')">Monty Hall</button>
+      <button class="arcade-tab" onclick="arcadeTab('bond')">Bond Order</button>
+      <button class="arcade-tab" onclick="arcadeTab('vesper')">Vesper Quiz</button>
+    </div>
+
+    <!-- ── REACTION TIMER ── -->
+    <div id="tab-rt" class="arcade-panel active fade-up">
+      <p class="g-desc">Watch the Omega Moonwatch. Click <strong style="color:var(--text)">Start</strong>, then click the watch the instant the dial flashes. How sharp are your reflexes?</p>
+      <div class="rt-wrap">
+        <div class="watch-outer" id="rt-watch" onclick="rtClick()">
+          <div class="watch-case">
+            <div class="watch-dial" id="rt-dial">
+              <div class="watch-logo">Ω Seamaster</div>
+              <div class="watch-subdial sd-nine"></div>
+              <div class="watch-subdial sd-six"></div>
+              <div class="watch-subdial sd-three"></div>
+              <div class="watch-hand hand-hour" id="rt-hour"></div>
+              <div class="watch-hand hand-min"  id="rt-min"></div>
+              <div class="watch-hand hand-sec"  id="rt-sec"></div>
+              <div class="watch-center"></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="g-result" id="rt-result"></div>
+          <div class="g-actions">
+            <button class="g-btn" id="rt-start" onclick="rtStart()">Start</button>
+          </div>
+          <div class="g-record">
+            Best: <span id="rt-best">—</span> &nbsp; Last: <span id="rt-last">—</span> &nbsp; Attempts: <span id="rt-attempts">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BLACKJACK ── -->
+    <div id="tab-bj" class="arcade-panel fade-up">
+      <p class="g-desc">Standard rules — dealer stands on 17. Playing for pride.</p>
+      <div class="g-label">Dealer</div>
+      <div class="bj-hand" id="bj-dealer"></div>
+      <div class="bj-score" id="bj-dscore"></div>
+      <div class="g-label">You</div>
+      <div class="bj-hand" id="bj-player"></div>
+      <div class="bj-score" id="bj-pscore"></div>
+      <div class="g-result" id="bj-result"></div>
+      <div class="g-actions">
+        <button class="g-btn"       id="bj-hit"   onclick="bjHit()"   disabled>Hit</button>
+        <button class="g-btn"       id="bj-stand" onclick="bjStand()" disabled>Stand</button>
+        <button class="g-btn ghost" id="bj-deal"  onclick="bjDeal()">Deal</button>
+      </div>
+      <div class="g-record">W: <span id="bj-w">0</span> &nbsp; L: <span id="bj-l">0</span> &nbsp; P: <span id="bj-p">0</span></div>
+    </div>
+
+    <!-- ── MONTY HALL ── -->
+    <div id="tab-mh" class="arcade-panel fade-up">
+      <p class="g-desc">Three doors. One 911. Two pigs. Pick a door — then decide if you want to switch after I show you a pig. Hint: track your switch vs. stay record over time. Or read <a href="https://athuphul.medium.com/deeply-understanding-the-monty-hall-problem-more-than-just-math-i-promise-4588c2803903" target="_blank" rel="noopener">why the math works</a> first.</p>
+      <div class="g-result" id="mh-phase" style="font-size:1rem;color:var(--text);font-family:'Inter',sans-serif;"></div>
+      <div class="mh-doors" id="mh-doors">
+        <div class="mh-door" id="mh-d0" onclick="mhPick(0)">🚪<span class="mh-door-label" id="mh-lbl0"></span><span class="mh-door-num">Door 1</span></div>
+        <div class="mh-door" id="mh-d1" onclick="mhPick(1)">🚪<span class="mh-door-label" id="mh-lbl1"></span><span class="mh-door-num">Door 2</span></div>
+        <div class="mh-door" id="mh-d2" onclick="mhPick(2)">🚪<span class="mh-door-label" id="mh-lbl2"></span><span class="mh-door-num">Door 3</span></div>
+      </div>
+      <div class="g-result" id="mh-result"></div>
+      <div class="g-actions">
+        <button class="g-btn"       id="mh-switch" onclick="mhChoose(true)"  disabled>Switch</button>
+        <button class="g-btn ghost" id="mh-stay"   onclick="mhChoose(false)" disabled>Stay</button>
+        <button class="g-btn ghost" id="mh-new"    onclick="mhNew()">New Game</button>
+      </div>
+      <div class="g-record">W: <span id="mh-w">0</span> &nbsp; L: <span id="mh-l">0</span> &nbsp;|&nbsp; Switched: <span id="mh-sw">0</span>W / <span id="mh-sl">0</span>L &nbsp; Stayed: <span id="mh-kw">0</span>W / <span id="mh-kl">0</span>L</div>
+    </div>
+
+    <!-- ── BOND ORDER ── -->
+    <div id="tab-bond" class="arcade-panel fade-up">
+      <p class="g-desc">Drag the Daniel Craig Bond films into the correct release order. Easiest game on here — or is it?</p>
+      <ul class="bond-list" id="bond-list"></ul>
+      <div class="g-result" id="bond-result"></div>
+      <div class="g-actions">
+        <button class="g-btn"       id="bond-check"  onclick="bondCheck()">Check Order</button>
+        <button class="g-btn ghost" id="bond-reset"  onclick="bondReset()">Shuffle</button>
+      </div>
+      <div class="g-record">Attempts: <span id="bond-attempts">0</span> &nbsp; Solved in: <span id="bond-best">—</span></div>
+    </div>
+
+    <!-- ── VESPER QUIZ ── -->
+    <div id="tab-vesper" class="arcade-panel fade-up">
+      <p class="g-desc">The Vesper. Ordered once, in <em>Casino Royale</em>. Three measures Gordon's, one vodka, half Kina Lillet — shaken, not stirred, with a large thin slice of lemon peel. How well do you know it?</p>
+      <div class="quiz-progress" id="quiz-prog">Question 1 of 5</div>
+      <div class="quiz-q" id="quiz-q"></div>
+      <div class="quiz-opts" id="quiz-opts"></div>
+      <div class="g-result" id="quiz-result"></div>
+      <div class="g-actions">
+        <button class="g-btn ghost" id="quiz-next" onclick="quizNext()" style="display:none">Next</button>
+        <button class="g-btn ghost" id="quiz-restart" onclick="quizRestart()" style="display:none">Play Again</button>
+      </div>
+      <div class="g-record">Score: <span id="quiz-score">0</span> / 5</div>
+    </div>
+
+  </section>
 
     <div id="bj" class="fade-up" style="max-width:560px;">
       <style>
@@ -759,6 +1009,88 @@
   </section>
 
   <script>
+  /* ── ARCADE TAB SWITCHER ── */
+  function arcadeTab(id) {
+    document.querySelectorAll('.arcade-tab').forEach((t,i) => {
+      const ids = ['rt','bj','mh','bond','vesper'];
+      t.classList.toggle('active', ids[i] === id);
+    });
+    document.querySelectorAll('.arcade-panel').forEach(p => {
+      p.classList.toggle('active', p.id === 'tab-'+id);
+    });
+  }
+
+  /* ── REACTION TIMER ── */
+  (function() {
+    const STATE = {IDLE:'IDLE', ARMED:'ARMED', FLASH:'FLASH', DONE:'DONE', EARLY:'EARLY'};
+    let state = STATE.IDLE, flashTime, timer, rafId, best = Infinity, attempts = 0;
+
+    // Build hour markers
+    const dial = document.getElementById('rt-dial');
+    for (let i = 0; i < 60; i++) {
+      const m = document.createElement('div');
+      m.className = 'watch-marker' + (i % 5 === 0 ? ' thick' : '');
+      m.style.transform = `rotate(${i*6}deg)`;
+      dial.appendChild(m);
+    }
+
+    function setHands() {
+      const now = new Date();
+      const s = now.getSeconds() + now.getMilliseconds()/1000;
+      const m = now.getMinutes() + s/60;
+      const h = (now.getHours() % 12) + m/60;
+      document.getElementById('rt-sec').style.transform  = `rotate(${s*6}deg)`;
+      document.getElementById('rt-min').style.transform  = `rotate(${m*6}deg)`;
+      document.getElementById('rt-hour').style.transform = `rotate(${h*30}deg)`;
+      rafId = requestAnimationFrame(setHands);
+    }
+    setHands();
+
+    window.rtStart = function() {
+      if (state === STATE.ARMED) return;
+      state = STATE.ARMED;
+      document.getElementById('rt-result').textContent = '';
+      document.getElementById('rt-result').className = 'g-result';
+      document.getElementById('rt-start').disabled = true;
+      const delay = 2000 + Math.random() * 4000;
+      timer = setTimeout(() => {
+        state = STATE.FLASH;
+        flashTime = performance.now();
+        dial.classList.add('flash');
+      }, delay);
+    };
+
+    window.rtClick = function() {
+      if (state === STATE.ARMED) {
+        clearTimeout(timer);
+        state = STATE.IDLE;
+        const el = document.getElementById('rt-result');
+        el.textContent = 'Too early! Wait for the flash.';
+        el.className = 'g-result lose';
+        dial.classList.remove('flash');
+        document.getElementById('rt-start').disabled = false;
+        return;
+      }
+      if (state !== STATE.FLASH) return;
+      const rt = Math.round(performance.now() - flashTime);
+      state = STATE.DONE;
+      dial.classList.remove('flash');
+      attempts++;
+      if (rt < best) best = rt;
+      const el = document.getElementById('rt-result');
+      el.textContent = `${rt} ms`;
+      el.className = 'g-result ' + (rt < 250 ? 'win' : rt < 400 ? 'push' : 'lose');
+      document.getElementById('rt-best').textContent = best === Infinity ? '—' : best + ' ms';
+      document.getElementById('rt-last').textContent = rt + ' ms';
+      document.getElementById('rt-attempts').textContent = attempts;
+      setTimeout(() => {
+        state = STATE.IDLE;
+        document.getElementById('rt-start').disabled = false;
+      }, 1000);
+    };
+  })();
+
+  /* ── BLACKJACK ── */
   (function() {
     const SUITS = ['♠','♥','♦','♣'];
     const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -806,10 +1138,12 @@
     }
     function setResult(msg, cls) {
       const el=document.getElementById('bj-result');
-      el.textContent=msg; el.className='bj-result '+cls;
+      el.textContent=msg; el.className='g-result '+cls;
     }
     function updateRecord() {
-      document.getElementById('bj-record').innerHTML=`W: ${wins} &nbsp; L: ${losses} &nbsp; P: ${pushes}`;
+      document.getElementById('bj-w').textContent=wins;
+      document.getElementById('bj-l').textContent=losses;
+      document.getElementById('bj-p').textContent=pushes;
     }
     function endGame() {
       gameOver=true;
@@ -853,6 +1187,192 @@
       dealerStep();
     };
   })();
+
+  /* ── MONTY HALL ── */
+  (function() {
+    let carDoor, picked, revealed;
+    let totalW=0, totalL=0, switchW=0, switchL=0, stayW=0, stayL=0;
+    const PHASE = {PICK:'PICK', SWITCH:'SWITCH', DONE:'DONE'};
+    let phase = PHASE.PICK;
+
+    function doorEl(i) { return document.getElementById('mh-d'+i); }
+    function lblEl(i)  { return document.getElementById('mh-lbl'+i); }
+    function icon(i)   { return i === carDoor ? '🏎️' : '🐷'; }
+
+    function resetDoors() {
+      for (let i=0;i<3;i++) {
+        const d = doorEl(i);
+        d.className = 'mh-door';
+        d.onclick = () => mhPick(i);
+        d.childNodes[0].textContent = '🚪';
+        lblEl(i).textContent = '';
+      }
+    }
+    function openDoor(i, isResult) {
+      const d = doorEl(i);
+      d.childNodes[0].textContent = icon(i);
+      lblEl(i).textContent = i === carDoor ? '911' : 'pig';
+      d.classList.add(isResult ? (i === carDoor ? 'mh-door--win' : 'mh-door--lose') : 'mh-door--open');
+      d.classList.add('mh-door--locked'); d.onclick = null;
+    }
+    function setPhase(txt) { document.getElementById('mh-phase').textContent = txt; }
+    function setResult(txt, cls) { const el=document.getElementById('mh-result'); el.textContent=txt; el.className='g-result '+cls; }
+    function updateStats() {
+      document.getElementById('mh-w').textContent=totalW; document.getElementById('mh-l').textContent=totalL;
+      document.getElementById('mh-sw').textContent=switchW; document.getElementById('mh-sl').textContent=switchL;
+      document.getElementById('mh-kw').textContent=stayW; document.getElementById('mh-kl').textContent=stayL;
+    }
+    window.mhNew = function() {
+      carDoor=Math.floor(Math.random()*3); picked=null; revealed=null; phase=PHASE.PICK;
+      resetDoors(); setPhase('Pick a door.'); setResult('','');
+      document.getElementById('mh-switch').disabled=true; document.getElementById('mh-stay').disabled=true;
+    };
+    window.mhPick = function(i) {
+      if (phase!==PHASE.PICK) return;
+      picked=i; phase=PHASE.SWITCH;
+      for (let j=0;j<3;j++) doorEl(j).classList.remove('mh-door--picked');
+      doorEl(i).classList.add('mh-door--picked','mh-door--locked'); doorEl(i).onclick=null;
+      const cands=[0,1,2].filter(j=>j!==picked&&j!==carDoor);
+      revealed=cands[Math.floor(Math.random()*cands.length)];
+      openDoor(revealed,false);
+      for (let j=0;j<3;j++) if (j!==revealed&&j!==picked) { doorEl(j).classList.add('mh-door--locked'); doorEl(j).onclick=null; }
+      setPhase('A pig! Now — switch or stay?');
+      document.getElementById('mh-switch').disabled=false; document.getElementById('mh-stay').disabled=false;
+    };
+    window.mhChoose = function(didSwitch) {
+      if (phase!==PHASE.SWITCH) return;
+      phase=PHASE.DONE;
+      document.getElementById('mh-switch').disabled=true; document.getElementById('mh-stay').disabled=true;
+      const finalDoor=didSwitch?[0,1,2].find(j=>j!==picked&&j!==revealed):picked;
+      const won=finalDoor===carDoor;
+      for (let i=0;i<3;i++) if (i!==revealed) openDoor(i,true);
+      if (won) { totalW++; didSwitch?switchW++:stayW++; setResult(didSwitch?'You switched — and won the 911! 🏎️':'You stayed — and won the 911! 🏎️','win'); }
+      else     { totalL++; didSwitch?switchL++:stayL++; setResult(didSwitch?'You switched — pig. 🐷':'You stayed — pig. 🐷','lose'); }
+      setPhase(''); updateStats();
+    };
+    mhNew();
+  })();
+
+  /* ── BOND ORDER ── */
+  (function() {
+    const FILMS = [
+      { title: 'Casino Royale',      year: 2006 },
+      { title: 'Quantum of Solace',  year: 2008 },
+      { title: 'Skyfall',            year: 2012 },
+      { title: 'Spectre',            year: 2015 },
+      { title: 'No Time to Die',     year: 2021 },
+    ];
+    let order = [], attempts = 0, bestAttempts = Infinity;
+    let dragSrc = null;
+
+    function buildList() {
+      const ul = document.getElementById('bond-list');
+      ul.innerHTML = '';
+      order.forEach((film, i) => {
+        const li = document.createElement('li');
+        li.className = 'bond-item';
+        li.draggable = true;
+        li.dataset.i = i;
+        li.innerHTML = `<span class="bond-num">${i+1}</span><span class="bond-title">${film.title}</span><span class="bond-year">${film.year}</span>`;
+        li.addEventListener('dragstart', e => { dragSrc = i; li.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+        li.addEventListener('dragend',   () => { document.querySelectorAll('.bond-item').forEach(x=>x.classList.remove('dragging','drag-over')); });
+        li.addEventListener('dragover',  e => { e.preventDefault(); li.classList.add('drag-over'); });
+        li.addEventListener('dragleave', () => li.classList.remove('drag-over'));
+        li.addEventListener('drop', e => {
+          e.preventDefault(); li.classList.remove('drag-over');
+          if (dragSrc === null || dragSrc === i) return;
+          const moved = order.splice(dragSrc, 1)[0];
+          order.splice(i, 0, moved);
+          buildList();
+        });
+        ul.appendChild(li);
+      });
+      document.getElementById('bond-result').textContent='';
+      document.getElementById('bond-result').className='g-result';
+    }
+
+    window.bondReset = function() {
+      order = [...FILMS].sort(()=>Math.random()-0.5);
+      buildList();
+    };
+    window.bondCheck = function() {
+      attempts++;
+      document.getElementById('bond-attempts').textContent = attempts;
+      const correct = order.every((f,i) => f.year === FILMS[i].year);
+      const items = document.querySelectorAll('.bond-item');
+      order.forEach((f,i) => items[i].classList.add(f.year===FILMS[i].year?'correct':'wrong'));
+      const el = document.getElementById('bond-result');
+      if (correct) {
+        if (attempts < bestAttempts) bestAttempts = attempts;
+        document.getElementById('bond-best').textContent = bestAttempts + (bestAttempts===1?' attempt':' attempts');
+        el.textContent = 'Perfect order. Bond would approve.'; el.className='g-result win';
+      } else {
+        el.textContent = 'Not quite. Try again.'; el.className='g-result lose';
+        setTimeout(()=>{ document.querySelectorAll('.bond-item').forEach(x=>x.classList.remove('correct','wrong')); }, 1200);
+      }
+    };
+    bondReset();
+  })();
+
+  /* ── VESPER QUIZ ── */
+  (function() {
+    const QS = [
+      { q: 'How many measures of gin does Bond order in the Vesper?',
+        opts: ['One','Two','Three','Four'], ans: 2 },
+      { q: 'What spirit joins the gin?',
+        opts: ['Rum','Vodka','Tequila','Bourbon'], ans: 1 },
+      { q: 'What is the aperitif wine used — now discontinued — in the original recipe?',
+        opts: ['Lillet Blanc','Kina Lillet','Dubonnet','Noilly Prat'], ans: 1 },
+      { q: 'How does Bond insist it be prepared?',
+        opts: ['Stirred, not shaken','Shaken, not stirred','Blended','On the rocks'], ans: 1 },
+      { q: 'What garnish finishes the Vesper?',
+        opts: ['Olive','Cocktail onion','Large thin slice of lemon peel','Orange twist'], ans: 2 },
+    ];
+    let cur = 0, score = 0, answered = false;
+
+    function render() {
+      const q = QS[cur];
+      document.getElementById('quiz-prog').textContent = `Question ${cur+1} of ${QS.length}`;
+      document.getElementById('quiz-q').textContent = q.q;
+      document.getElementById('quiz-result').textContent = '';
+      document.getElementById('quiz-result').className = 'g-result';
+      document.getElementById('quiz-next').style.display = 'none';
+      document.getElementById('quiz-restart').style.display = 'none';
+      answered = false;
+      const opts = document.getElementById('quiz-opts');
+      opts.innerHTML = '';
+      q.opts.forEach((o, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt'; btn.textContent = o;
+        btn.onclick = () => answer(i);
+        opts.appendChild(btn);
+      });
+    }
+    function answer(i) {
+      if (answered) return; answered = true;
+      const btns = document.querySelectorAll('.quiz-opt');
+      btns.forEach(b => b.disabled = true);
+      const correct = i === QS[cur].ans;
+      btns[i].classList.add(correct ? 'correct' : 'wrong');
+      if (!correct) btns[QS[cur].ans].classList.add('correct');
+      if (correct) score++;
+      document.getElementById('quiz-score').textContent = score;
+      const el = document.getElementById('quiz-result');
+      el.textContent = correct ? 'Correct.' : 'Wrong.';
+      el.className = 'g-result ' + (correct ? 'win' : 'lose');
+      if (cur < QS.length - 1) {
+        document.getElementById('quiz-next').style.display = 'inline-block';
+      } else {
+        const msg = score === 5 ? 'Perfect. You know your Vesper.' : score >= 3 ? `${score}/5 — not bad.` : `${score}/5 — read the book.`;
+        setTimeout(() => { el.textContent = msg; el.className = 'g-result ' + (score>=3?'win':'lose'); }, 600);
+        document.getElementById('quiz-restart').style.display = 'inline-block';
+      }
+    }
+    window.quizNext = function() { cur++; render(); };
+    window.quizRestart = function() { cur=0; score=0; document.getElementById('quiz-score').textContent=0; render(); };
+    render();
+  })();
+
   </script>
 
   <!-- CONTACT -->
@@ -881,261 +1401,6 @@
     </div>
   </section>
 
-  <!-- MONTY HALL -->
-  <section id="montyhall" style="background: var(--bg2); border-top: 1px solid var(--border);">
-    <p class="section-label fade-up">You made it even further</p>
-    <h2 class="section-title fade-up">Win your own 911</h2>
-    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:0.6rem;max-width:560px;" class="fade-up">
-      Three doors. One 911. Two pigs. Pick a door — then decide if you want to switch after I show you a pig.
-      The math might surprise you.
-    </p>
-    <p style="color:var(--muted);font-size:0.78rem;margin-bottom:2rem;max-width:560px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;" class="fade-up">
-      Hint: track your switch vs. stay record over time. Or read
-      <a href="https://athuphul.medium.com/deeply-understanding-the-monty-hall-problem-more-than-just-math-i-promise-4588c2803903" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-dim);">why the math works</a>
-      first — I wrote about it.
-    </p>
-
-    <div id="mh" class="fade-up" style="max-width:580px;">
-      <style>
-        #mh { user-select: none; }
-
-        .mh-doors {
-          display: flex; gap: 1.2rem; margin-bottom: 2rem;
-        }
-        .mh-door {
-          flex: 1; aspect-ratio: 9/14; max-width: 160px;
-          background: var(--bg3); border: 2px solid var(--border);
-          border-radius: 6px 6px 0 0;
-          display: flex; flex-direction: column;
-          align-items: center; justify-content: center;
-          cursor: pointer; position: relative;
-          transition: border-color 0.2s, transform 0.2s;
-          font-size: 3rem; overflow: hidden;
-        }
-        .mh-door:hover:not(.mh-door--locked) {
-          border-color: var(--gold-dim);
-          transform: translateY(-4px);
-        }
-        .mh-door--picked  { border-color: var(--gold); }
-        .mh-door--locked  { cursor: default; }
-        .mh-door--open    { border-color: var(--border); }
-        .mh-door--win     { border-color: var(--gold); background: rgba(201,168,76,0.08); }
-        .mh-door--lose    { border-color: #c0392b;     background: rgba(192,57,43,0.06); }
-
-        .mh-door-num {
-          font-family: 'JetBrains Mono', monospace;
-          font-size: 0.65rem; letter-spacing: 0.2em;
-          color: var(--muted); text-transform: uppercase;
-          position: absolute; bottom: 0.5rem;
-        }
-        .mh-door-label {
-          font-family: 'JetBrains Mono', monospace;
-          font-size: 0.6rem; letter-spacing: 0.15em;
-          color: var(--muted); text-transform: uppercase;
-          position: absolute; top: 0.5rem;
-          opacity: 0; transition: opacity 0.3s;
-        }
-        .mh-door--open .mh-door-label,
-        .mh-door--win  .mh-door-label,
-        .mh-door--lose .mh-door-label { opacity: 1; }
-
-        .mh-phase {
-          font-family: 'Playfair Display', serif;
-          font-size: 1rem; color: var(--text);
-          margin-bottom: 1.2rem; min-height: 1.6rem;
-        }
-        .mh-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-        .mh-btn {
-          padding: 0.6rem 1.6rem;
-          border: 1px solid var(--gold); background: transparent;
-          color: var(--gold); font-family: 'Inter', sans-serif;
-          font-size: 0.78rem; letter-spacing: 0.15em;
-          text-transform: uppercase; cursor: pointer;
-          transition: background 0.2s, color 0.2s;
-        }
-        .mh-btn:hover:not(:disabled) { background: var(--gold); color: var(--bg); }
-        .mh-btn:disabled { opacity: 0.3; cursor: default; border-color: var(--border); color: var(--muted); }
-        .mh-btn.ghost { border-color: var(--border); color: var(--muted); }
-        .mh-btn.ghost:hover:not(:disabled) { background: var(--bg3); color: var(--text); }
-
-        .mh-result {
-          font-family: 'Playfair Display', serif;
-          font-size: 1.4rem; min-height: 2rem;
-          margin-bottom: 1rem;
-        }
-        .mh-result.win  { color: var(--gold); }
-        .mh-result.lose { color: #c0392b; }
-
-        .mh-stats {
-          font-family: 'JetBrains Mono', monospace;
-          font-size: 0.7rem; color: var(--muted);
-          letter-spacing: 0.08em; line-height: 1.9;
-        }
-        .mh-stats span { color: var(--text); }
-      </style>
-
-      <div class="mh-phase" id="mh-phase">Pick a door to start.</div>
-
-      <div class="mh-doors" id="mh-doors">
-        <div class="mh-door" id="mh-d0" onclick="mhPick(0)">
-          🚪
-          <span class="mh-door-label" id="mh-lbl0"></span>
-          <span class="mh-door-num">Door 1</span>
-        </div>
-        <div class="mh-door" id="mh-d1" onclick="mhPick(1)">
-          🚪
-          <span class="mh-door-label" id="mh-lbl1"></span>
-          <span class="mh-door-num">Door 2</span>
-        </div>
-        <div class="mh-door" id="mh-d2" onclick="mhPick(2)">
-          🚪
-          <span class="mh-door-label" id="mh-lbl2"></span>
-          <span class="mh-door-num">Door 3</span>
-        </div>
-      </div>
-
-      <div class="mh-result" id="mh-result"></div>
-
-      <div class="mh-actions">
-        <button class="mh-btn" id="mh-switch" onclick="mhChoose(true)"  disabled>Switch</button>
-        <button class="mh-btn ghost" id="mh-stay"   onclick="mhChoose(false)" disabled>Stay</button>
-        <button class="mh-btn ghost" id="mh-new"    onclick="mhNew()">New Game</button>
-      </div>
-
-      <div class="mh-stats" id="mh-stats">
-        W: <span id="mh-w">0</span> &nbsp; L: <span id="mh-l">0</span>
-        &nbsp;&nbsp;|&nbsp;&nbsp;
-        Switched: <span id="mh-sw">0</span>W / <span id="mh-sl">0</span>L
-        &nbsp;&nbsp;
-        Stayed: <span id="mh-kw">0</span>W / <span id="mh-kl">0</span>L
-      </div>
-    </div>
-  </section>
-
-  <script>
-  (function() {
-    // state
-    let carDoor, picked, revealed;
-    let totalW=0, totalL=0;
-    let switchW=0, switchL=0, stayW=0, stayL=0;
-    const PHASE = {PICK:'PICK', SWITCH:'SWITCH', DONE:'DONE'};
-    let phase = PHASE.PICK;
-
-    function doorEl(i)   { return document.getElementById('mh-d'+i); }
-    function lblEl(i)    { return document.getElementById('mh-lbl'+i); }
-    function icon(i)     { return i === carDoor ? '🏎️' : '🐷'; }
-
-    function resetDoors() {
-      for (let i=0;i<3;i++) {
-        const d = doorEl(i);
-        d.className = 'mh-door';
-        d.onclick = () => mhPick(i);
-        // reset inner text to closed door, preserve label + num spans
-        d.childNodes[0].textContent = '🚪';
-        lblEl(i).textContent = '';
-      }
-    }
-
-    function openDoor(i, isResult) {
-      const d = doorEl(i);
-      d.childNodes[0].textContent = icon(i);
-      lblEl(i).textContent = i === carDoor ? '911' : 'pig';
-      if (isResult) {
-        d.classList.add(i === carDoor ? 'mh-door--win' : 'mh-door--lose');
-      } else {
-        d.classList.add('mh-door--open');
-      }
-      d.classList.add('mh-door--locked');
-      d.onclick = null;
-    }
-
-    function setPhase(txt) { document.getElementById('mh-phase').textContent = txt; }
-    function setResult(txt, cls) {
-      const el = document.getElementById('mh-result');
-      el.textContent = txt; el.className = 'mh-result ' + cls;
-    }
-    function updateStats() {
-      document.getElementById('mh-w').textContent  = totalW;
-      document.getElementById('mh-l').textContent  = totalL;
-      document.getElementById('mh-sw').textContent = switchW;
-      document.getElementById('mh-sl').textContent = switchL;
-      document.getElementById('mh-kw').textContent = stayW;
-      document.getElementById('mh-kl').textContent = stayL;
-    }
-
-    window.mhNew = function() {
-      carDoor = Math.floor(Math.random() * 3);
-      picked = null; revealed = null;
-      phase = PHASE.PICK;
-      resetDoors();
-      setPhase('Pick a door.');
-      setResult('', '');
-      document.getElementById('mh-switch').disabled = true;
-      document.getElementById('mh-stay').disabled   = true;
-    };
-
-    window.mhPick = function(i) {
-      if (phase !== PHASE.PICK) return;
-      picked = i;
-      phase = PHASE.SWITCH;
-
-      // mark picked
-      for (let j=0;j<3;j++) doorEl(j).classList.remove('mh-door--picked');
-      doorEl(i).classList.add('mh-door--picked','mh-door--locked');
-      doorEl(i).onclick = null;
-
-      // host reveals a goat door (not picked, not car)
-      const candidates = [0,1,2].filter(j => j !== picked && j !== carDoor);
-      revealed = candidates[Math.floor(Math.random() * candidates.length)];
-      openDoor(revealed, false);
-
-      // lock the revealed door for other clicks too
-      for (let j=0;j<3;j++) {
-        if (j !== revealed && j !== picked) {
-          // this is the remaining unchosen closed door — keep it clickable? No, use buttons.
-          doorEl(j).classList.add('mh-door--locked');
-          doorEl(j).onclick = null;
-        }
-      }
-
-      setPhase('A pig! Now — switch or stay?');
-      document.getElementById('mh-switch').disabled = false;
-      document.getElementById('mh-stay').disabled   = false;
-    };
-
-    window.mhChoose = function(didSwitch) {
-      if (phase !== PHASE.SWITCH) return;
-      phase = PHASE.DONE;
-      document.getElementById('mh-switch').disabled = true;
-      document.getElementById('mh-stay').disabled   = true;
-
-      const finalDoor = didSwitch
-        ? [0,1,2].find(j => j !== picked && j !== revealed)
-        : picked;
-
-      const won = finalDoor === carDoor;
-
-      // reveal all doors
-      for (let i=0;i<3;i++) {
-        if (i !== revealed) openDoor(i, true);
-      }
-
-      if (won) {
-        totalW++; didSwitch ? switchW++ : stayW++;
-        setResult(didSwitch ? 'You switched — and won the 911! 🏎️' : 'You stayed — and won the 911! 🏎️', 'win');
-        setPhase('');
-      } else {
-        totalL++; didSwitch ? switchL++ : stayL++;
-        setResult(didSwitch ? 'You switched — pig. 🐷' : 'You stayed — pig. 🐷', 'lose');
-        setPhase('');
-      }
-      updateStats();
-    };
-
-    // kick off first game
-    mhNew();
-  })();
-  </script>
 
   <script>
     // Intersection Observer for fade-up animations
