@@ -823,21 +823,20 @@
     </style>
 
     <div class="arcade-tabs fade-up" id="arcade-tabs">
-      <button class="arcade-tab active" onclick="arcadeTab('rt')">Reaction Timer</button>
-      <button class="arcade-tab" onclick="arcadeTab('bj')">Blackjack</button>
+      <button class="arcade-tab active" onclick="arcadeTab('bj')">Blackjack</button>
       <button class="arcade-tab" onclick="arcadeTab('mh')">Monty Hall</button>
-      <button class="arcade-tab" onclick="arcadeTab('bond')">Bond Order</button>
       <button class="arcade-tab" onclick="arcadeTab('vesper')">Vesper Quiz</button>
+      <button class="arcade-tab" onclick="arcadeTab('bond')">Bond Order</button>
+      <button class="arcade-tab" onclick="arcadeTab('rt')">Reaction Timer</button>
     </div>
 
     <!-- ── REACTION TIMER ── -->
-    <div id="tab-rt" class="arcade-panel active fade-up">
+    <div id="tab-rt" class="arcade-panel fade-up">
       <p class="g-desc">Watch the Omega Moonwatch. Click <strong style="color:var(--text)">Start</strong>, then click the watch the instant the dial flashes. How sharp are your reflexes?</p>
       <div class="rt-wrap">
         <div class="watch-outer" id="rt-watch" onclick="rtClick()">
           <div class="watch-case">
             <div class="watch-dial" id="rt-dial">
-              <div class="watch-logo">Ω Seamaster</div>
               <div class="watch-subdial sd-nine"></div>
               <div class="watch-subdial sd-six"></div>
               <div class="watch-subdial sd-three"></div>
@@ -861,7 +860,7 @@
     </div>
 
     <!-- ── BLACKJACK ── -->
-    <div id="tab-bj" class="arcade-panel fade-up">
+    <div id="tab-bj" class="arcade-panel active fade-up">
       <p class="g-desc">Standard rules — dealer stands on 17. Playing for pride.</p>
       <div class="g-label">Dealer</div>
       <div class="bj-hand" id="bj-dealer"></div>
@@ -928,7 +927,7 @@
   /* ── ARCADE TAB SWITCHER ── */
   function arcadeTab(id) {
     document.querySelectorAll('.arcade-tab').forEach((t,i) => {
-      const ids = ['rt','bj','mh','bond','vesper'];
+      const ids = ['bj','mh','vesper','bond','rt'];
       t.classList.toggle('active', ids[i] === id);
     });
     document.querySelectorAll('.arcade-panel').forEach(p => {
@@ -1189,7 +1188,7 @@
         li.className = 'bond-item';
         li.draggable = true;
         li.dataset.i = i;
-        li.innerHTML = `<span class="bond-num">${i+1}</span><span class="bond-title">${film.title}</span><span class="bond-year">${film.year}</span>`;
+        li.innerHTML = `<span class="bond-num">${i+1}</span><span class="bond-title">${film.title}</span>`;
         li.addEventListener('dragstart', e => { dragSrc = i; li.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
         li.addEventListener('dragend',   () => { document.querySelectorAll('.bond-item').forEach(x=>x.classList.remove('dragging','drag-over')); });
         li.addEventListener('dragover',  e => { e.preventDefault(); li.classList.add('drag-over'); });
