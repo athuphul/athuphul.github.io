@@ -777,12 +777,13 @@
       .sd-six   { width: 38px; height: 38px; top: 68%; left: 50%; transform: translate(-50%,-50%); }
       .sd-three { width: 38px; height: 38px; top: 50%; left: 78%; transform: translate(-50%,-50%); }
       /* hands */
-      .watch-hand { position: absolute; left: 50%; bottom: 50%; transform-origin: 50% 100%; border-radius: 2px 2px 0 0; }
+      .watch-hand { position: absolute; left: 50%; bottom: 50%; transform-origin: 50% 100%; border-radius: 2px 2px 0 0; z-index: 2; }
       .hand-hour  { width: 4px; height: 48px; background: #111; margin-left: -2px; }
       .hand-min   { width: 3px; height: 62px; background: #111; margin-left: -1.5px; }
       .hand-sec   { width: 1.5px; height: 72px; background: #c0392b; margin-left: -0.75px; }
       .hand-sec::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 5px; height: 14px; background: #c0392b; border-radius: 2px; }
       .watch-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 8px; height: 8px; border-radius: 50%; background: #c0392b; z-index: 10; }
+      .watch-marker { z-index: 1; }
       .watch-logo { position: absolute; top: 38%; left: 50%; transform: translateX(-50%); font-family: 'Playfair Display', serif; font-size: 0.45rem; color: #555; letter-spacing: 0.15em; text-transform: uppercase; white-space: nowrap; }
       .rt-best { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; margin-top: 0.4rem; }
       .rt-best span { color: var(--gold); }
@@ -940,13 +941,14 @@
     const STATE = {IDLE:'IDLE', ARMED:'ARMED', FLASH:'FLASH', DONE:'DONE', EARLY:'EARLY'};
     let state = STATE.IDLE, flashTime, timer, rafId, best = Infinity, attempts = 0;
 
-    // Build hour markers
+    // Build hour markers — insert before hands so hands render on top
     const dial = document.getElementById('rt-dial');
+    const firstHand = document.getElementById('rt-hour');
     for (let i = 0; i < 60; i++) {
       const m = document.createElement('div');
       m.className = 'watch-marker' + (i % 5 === 0 ? ' thick' : '');
       m.style.transform = `rotate(${i*6}deg)`;
-      dial.appendChild(m);
+      dial.insertBefore(m, firstHand);
     }
 
     function setHands() {
