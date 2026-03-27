@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atharva Phulambrikar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #111110;
+      --bg2:       #1a1a18;
+      --bg3:       #222220;
+      --gold:      #c9a84c;
+      --gold-dim:  #8a6f30;
+      --cream:     #f0e6cc;
+      --muted:     #7a7870;
+      --text:      #d8d0bc;
+      --accent:    #e8354a; /* Brighton red */
+      --border:    rgba(201,168,76,0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(17,17,16,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); font-size: 0.82rem; letter-spacing: 0.12em;
+      text-transform: uppercase; text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 4rem;
+      position: relative; overflow: hidden;
+    }
+
+    /* Decorative tachymeter ring */
+    .tach-ring {
+      position: absolute; right: -180px; top: 50%;
+      transform: translateY(-50%);
+      width: 640px; height: 640px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      pointer-events: none;
+    }
+    .tach-ring::before {
+      content: '';
+      position: absolute; inset: 24px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.08);
+    }
+    .tach-ring::after {
+      content: '';
+      position: absolute; inset: 60px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.05);
+    }
+    /* tick marks */
+    .tach-ticks {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+    }
+
+    /* Racing stripe detail */
+    .stripe {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: linear-gradient(to bottom, transparent, var(--gold) 20%, var(--gold) 80%, transparent);
+      opacity: 0.4;
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.25em;
+      color: var(--gold); text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 900;
+      color: var(--cream);
+      line-height: 1.05;
+      margin-bottom: 1.4rem;
+    }
+    .hero-name span { color: var(--gold); }
+    .hero-tagline {
+      max-width: 520px; line-height: 1.8;
+      margin-bottom: 2.8rem;
+    }
+    .hero-tagline .line1 { display: block; font-size: 1.05rem; color: var(--text); }
+    .hero-tagline .line2 { display: block; font-size: 1.05rem; color: var(--muted); }
+
+    .hero-cta {
+      display: flex; gap: 1rem; align-items: center;
+    }
+    .btn {
+      display: inline-block; padding: 0.7rem 1.8rem;
+      border: 1px solid var(--gold);
+      color: var(--gold); font-size: 0.8rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      text-decoration: none; font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn:hover { background: var(--gold); color: var(--bg); }
+    .btn-ghost {
+      border-color: var(--border); color: var(--muted);
+    }
+    .btn-ghost:hover { background: var(--bg3); color: var(--text); }
+
+    .hero-suits {
+      position: absolute; right: 4rem; bottom: 3rem;
+      display: flex; gap: 0.6rem;
+      font-size: 1.8rem; opacity: 0.12; color: var(--gold);
+    }
+
+    /* ── SECTIONS COMMON ── */
+    section { padding: 6rem 4rem; }
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem; letter-spacing: 0.3em;
+      color: var(--gold); text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 700; color: var(--cream);
+      margin-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+    }
+
+    /* ── ABOUT ── */
+    #about { background: var(--bg2); }
+    .about-grid {
+      max-width: 720px;
+    }
+    .about-bio { font-size: 1rem; color: var(--text); line-height: 1.9; }
+    .about-bio p + p { margin-top: 1rem; }
+    .about-bio strong { color: var(--text); font-weight: 400; }
+
+    /* ── WORK ── */
+    #work { background: var(--bg); }
+    .timeline { position: relative; }
+    .timeline::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 1px; background: var(--border);
+    }
+    .timeline-item {
+      padding-left: 2rem; margin-bottom: 2.5rem;
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute; left: -4px; top: 0.5rem;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--gold); border: 2px solid var(--bg);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.2);
+    }
+    .timeline-role {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; color: var(--cream); font-weight: 700;
+    }
+    .timeline-company {
+      font-size: 0.85rem; color: var(--gold);
+      margin: 0.1rem 0 0.2rem;
+    }
+    .timeline-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em;
+    }
+
+    /* ── INTERESTS / HOBBIES ── */
+    #interests { background: var(--bg2); }
+    .interests-intro {
+      font-size: 1rem; color: var(--muted);
+      max-width: 600px; margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+    .hobby-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    .hobby-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 1.8rem 1.4rem;
+      position: relative; overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+      cursor: default;
+    }
+    .hobby-card:hover {
+      border-color: var(--gold-dim);
+      transform: translateY(-3px);
+    }
+    .hobby-card::before {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0; transition: opacity 0.25s;
+    }
+    .hobby-card:hover::before { opacity: 1; }
+    .hobby-icon { font-size: 2rem; margin-bottom: 0.8rem; line-height: 1; }
+    .hobby-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem; color: var(--cream);
+      margin-bottom: 0.3rem;
+    }
+    .hobby-detail {
+      font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+    }
+    .hobby-card.big {
+      grid-column: span 2;
+      display: flex; gap: 1.5rem; align-items: flex-start;
+    }
+    .hobby-card.big .hobby-text { flex: 1; }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--bg2); text-align: center; }
+    .contact-inner { max-width: 560px; margin: 0 auto; }
+    .contact-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      color: var(--cream); margin-bottom: 1rem;
+    }
+    .contact-sub {
+      color: var(--muted); font-size: 0.95rem;
+      margin-bottom: 2.5rem; line-height: 1.8;
+    }
+    .contact-links {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    .contact-link {
+      display: flex; align-items: center; gap: 0.5rem;
+      color: var(--muted); text-decoration: none;
+      font-size: 0.82rem; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid var(--border); padding: 0.55rem 1.2rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .contact-link:hover { color: var(--gold); border-color: var(--gold-dim); }
+
+    .footer-rule {
+      border: none; border-top: 1px solid var(--border);
+      margin: 3rem 0 1.5rem;
+    }
+    .footer-note {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem; color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      height: 1px; background: var(--border);
+      margin: 0 4rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { display: none; }
+      .hero { padding: 6rem 2rem 4rem; }
+      section { padding: 4rem 2rem; }
+      .hobby-card.big { grid-column: span 1; flex-direction: column; }
+      .section-divider { margin: 0 2rem; }
+      .tach-ring { display: none; }
+    }
+
+    /* Fade-in on scroll */
+    .fade-up {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible {
+      opacity: 1; transform: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#">AP</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#interests">Interests</a></li>
+      <li><a href="#recs">Recs</a></li>
+      <li><a href="#game">Blackjack</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="stripe"></div>
+    <div class="tach-ring"></div>
+
+    <p class="hero-eyebrow fade-up">Software Engineer &nbsp;·&nbsp; San Francisco, CA</p>
+    <h1 class="hero-name fade-up">
+      Atharva<br /><span>Phulambrikar</span>
+    </h1>
+    <p class="hero-tagline fade-up">
+      <span class="line1">Working on distributed data problems at Roblox.</span>
+      <span class="line2">Equally at home dissecting a flat-six engine, debating in-house movements, or reading pot odds at 2 a.m.</span>
+    </p>
+    <div class="hero-cta fade-up">
+      <a class="btn" href="#work">My work</a>
+      <a class="btn btn-ghost" href="#contact">Get in touch</a>
+    </div>
+
+    <!-- Poker suits easter egg -->
+    <div class="hero-suits" aria-hidden="true">
+      <span>♠</span><span>♥</span><span>♦</span><span>♣</span>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="section-label fade-up">hello, world!</p>
+    <h2 class="section-title fade-up">A bit about me</h2>
+    <div class="about-grid">
+      <div class="about-bio fade-up">
+        <p>
+          I'm a software engineer at <strong>Roblox</strong>, working on distributed data problems that power one of the
+          world's largest social platforms. I'm originally from <strong>Pune, India</strong> — where I fronted a band called <em>loco</em> as
+          lead singer and rhythm guitarist before shipping off to Texas. I've been playing guitar and trained
+          in Indian classical vocals since I was young. Music is just part of how I'm wired.
+        </p>
+        <p>
+          I approach most things in life the same way I approach a poker hand — read the situation carefully,
+          manage your risk, and don't be afraid to make the big bet when the math is right. Whether that's a
+          career move, a watch auction, or your friends convincing you that you can send it down a double black diamond on the mountain.
+        </p>
+        <p>
+          When I'm not writing code or at the felt, you'll find me ogling Porsches, obsessing over
+          seconds complications, or explaining why <strong>Brighton & Hove Albion</strong> and
+          <strong>Indian cricket</strong> are objectively correct life choices. I also ski, play rec soccer,
+          and am currently figuring out which grip to use on a tennis racket.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- WORK -->
+  <section id="work">
+    <p class="section-label fade-up">Career</p>
+    <h2 class="section-title fade-up">Where I've worked</h2>
+    <div class="timeline fade-up">
+
+      <div class="timeline-item">
+        <div class="timeline-role">Software Engineer II</div>
+        <div class="timeline-company">Roblox</div>
+        <div class="timeline-date">June 2021 — Present</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-role">Capstone SWE Intern</div>
+        <div class="timeline-company">Toyota Financial Services</div>
+        <div class="timeline-date">Aug 2020 — Dec 2020</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-role">Software Engineer Intern</div>
+        <div class="timeline-company">Morgan Stanley</div>
+        <div class="timeline-date">June 2020 — Aug 2020</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-role">Software Engineer Intern</div>
+        <div class="timeline-company">Text-Em-All</div>
+        <div class="timeline-date">June 2019 — Dec 2019</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-role">CS Mentor</div>
+        <div class="timeline-company">UT Dallas CS Mentor Center</div>
+        <div class="timeline-date">Feb 2019 — May 2021</div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- INTERESTS -->
+  <section id="interests">
+    <p class="section-label fade-up">Beyond the code</p>
+    <h2 class="section-title fade-up">What I'm actually into</h2>
+    <p class="interests-intro fade-up">
+      Work is what I do. These are what I <em>am</em>.
+    </p>
+    <div class="hobby-grid">
+
+      <div class="hobby-card big fade-up">
+        <div class="hobby-icon">🏎️</div>
+        <div class="hobby-text">
+          <div class="hobby-name">Porsche & the art of ICE</div>
+          <div class="hobby-detail">
+            The 987 Boxster and Cayman are the most underrated sports cars Porsche ever built — a mid-engine
+            layout, a flat-six that screams, and a chassis that will teach you more about driving than almost
+            anything else. I have strong opinions about the 996 being underrated, Alfa Romeos being
+            criminally underappreciated in America, and why the sound of a flat-six at redline is one of
+            life's great pleasures. Vespas count too.
+          </div>
+        </div>
+      </div>
+
+      <div class="hobby-card fade-up">
+        <div class="hobby-icon">⌚</div>
+        <div class="hobby-name">Horology</div>
+        <div class="hobby-detail">
+          Mechanical watchmaking is engineering as art. I appreciate the craft behind a well-executed in-house movement more than any smartwatch will ever make me feel. My grail? The Breguet Retrograde Seconds 7097 — if not for a certain British spy's influence pushing me firmly toward the Omega Seamaster instead.
+        </div>
+      </div>
+
+      <div class="hobby-card fade-up">
+        <div class="hobby-icon">🃏</div>
+        <div class="hobby-name">Poker</div>
+        <div class="hobby-detail">
+          No-limit Texas Hold'em, late nights, long sessions. Equal parts math, psychology, and patience. Any game is fun no matter the stakes — whether it's a tournament final table in Vegas or a weekend home game with your buddies and some cold ones. The table doesn't lie either way.
+        </div>
+      </div>
+
+      <div class="hobby-card fade-up">
+        <div class="hobby-icon">🎸</div>
+        <div class="hobby-name">Music</div>
+        <div class="hobby-detail">
+          Big John Mayer fan — the blues playing, the songwriting, all of it. Music is the one hobby that goes everywhere with me.
+        </div>
+      </div>
+
+      <div class="hobby-card fade-up">
+        <div class="hobby-icon">⚽</div>
+        <div class="hobby-name">Brighton & Hove Albion</div>
+        <div class="hobby-detail">
+          Seagulls through and through. I watched De Zerbi's attacking football with genuine joy, and I'm not apologizing for it. I also play rec soccer — nowhere near Premier League level, but the love for the game is real.
+        </div>
+      </div>
+
+      <div class="hobby-card fade-up">
+        <div class="hobby-icon">🏏</div>
+        <div class="hobby-name">Cricket</div>
+        <div class="hobby-detail">
+          Borderline obsessive about Indian cricket. Stats, history, Test match nerdom — I have opinions about every selection decision and I will share them unprompted.
+        </div>
+      </div>
+
+      <div class="hobby-card fade-up">
+        <div class="hobby-icon">🇮🇹</div>
+        <div class="hobby-name">Italy, generally</div>
+        <div class="hobby-detail">
+          The food, the leather, the cars, the Godfather trilogy, a Negroni before dinner. Italian culture gets a lot right — I'm happy to elaborate at length.
+        </div>
+      </div>
+
+      <div class="hobby-card fade-up">
+        <div class="hobby-icon">☕</div>
+        <div class="hobby-name">Coffee</div>
+        <div class="hobby-detail">
+          Espresso, properly made. Not a breakfast beverage — an entire ritual. Always on the hunt for the best cortado in town, as long as it's served in a Gibraltar of course.
+        </div>
+      </div>
+
+      <div class="hobby-card fade-up">
+        <div class="hobby-icon">🎰</div>
+        <div class="hobby-name">James Bond / 007</div>
+        <div class="hobby-detail">
+          Daniel Craig is the definitive Bond — <em>Casino Royale</em> is a near-perfect film, Eva Green's Vesper Lynd is the best Bond character ever written, and the Omega Seamaster is on my wrist wishlist for exactly this reason. I loved the character so much I named my car Vesper :)
+        </div>
+      </div>
+
+      <div class="hobby-card fade-up">
+        <div class="hobby-icon">⛷️</div>
+        <div class="hobby-name">Skiing</div>
+        <div class="hobby-detail">
+          There's something about carving down a mountain that silences everything else. Done Gulmarg, Colorado, Tahoe, the local Vancouver resorts, and Whistler so far. Japan, Europe, and Georgia are next on the list.
+        </div>
+      </div>
+
+      <div class="hobby-card fade-up">
+        <div class="hobby-icon">🎾</div>
+        <div class="hobby-name">Tennis</div>
+        <div class="hobby-detail">
+          Currently learning. The serve is a work in progress. Everything else is also a work in progress. Ask me again in six months.
+        </div>
+      </div>
+
+      <div class="hobby-card fade-up">
+        <div class="hobby-icon">✈️</div>
+        <div class="hobby-name">RC Airplanes</div>
+        <div class="hobby-detail">
+          A slightly niche one, but there's something deeply satisfying about building and flying a scale model that actually works.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- RECOMMENDATIONS -->
+  <section id="recs" style="background: var(--bg2);">
+    <p class="section-label fade-up">Kind words</p>
+    <h2 class="section-title fade-up">Recommendations</h2>
+
+    <style>
+      .carousel {
+        position: relative; max-width: 680px; overflow: hidden;
+      }
+      .carousel-track {
+        display: flex; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+      }
+      .rec-card {
+        min-width: 100%; padding: 2.4rem 2.8rem;
+        background: var(--bg3); border: 1px solid var(--border);
+        box-sizing: border-box;
+      }
+      .rec-quote {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.15rem; color: var(--cream);
+        line-height: 1.8; margin-bottom: 1.6rem;
+        position: relative;
+      }
+      .rec-quote::before {
+        content: '\201C';
+        font-size: 4rem; color: var(--gold); opacity: 0.25;
+        position: absolute; top: -1rem; left: -0.5rem;
+        font-family: 'Playfair Display', serif;
+        line-height: 1;
+      }
+      .rec-name {
+        font-size: 0.85rem; color: var(--gold);
+        font-weight: 500; margin-bottom: 0.15rem;
+      }
+      .rec-title {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.68rem; color: var(--muted);
+        letter-spacing: 0.08em;
+      }
+      .carousel-controls {
+        display: flex; align-items: center; gap: 1rem;
+        margin-top: 1.4rem;
+      }
+      .carousel-btn {
+        background: transparent; border: 1px solid var(--border);
+        color: var(--muted); width: 36px; height: 36px;
+        cursor: pointer; font-size: 1rem;
+        display: flex; align-items: center; justify-content: center;
+        transition: border-color 0.2s, color 0.2s;
+      }
+      .carousel-btn:hover { border-color: var(--gold); color: var(--gold); }
+      .carousel-dots { display: flex; gap: 0.4rem; }
+      .carousel-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--border); cursor: pointer;
+        transition: background 0.2s;
+      }
+      .carousel-dot.active { background: var(--gold); }
+    </style>
+
+    <div class="carousel fade-up">
+      <div class="carousel-track" id="rec-track">
+
+        <div class="rec-card">
+          <p class="rec-quote">Atharva grew to become a valuable member of our team and any team would be lucky to have him.</p>
+          <p class="rec-name">Hai Nguyen</p>
+          <p class="rec-title">VP of Engineering, Co-founder · Text-Em-All</p>
+        </div>
+
+        <div class="rec-card">
+          <p class="rec-quote">He is a quick learner and very proactive with excellent problem solving and communication skills.</p>
+          <p class="rec-name">Jing Huang</p>
+          <p class="rec-title">Executive Director · Morgan Stanley</p>
+        </div>
+
+        <div class="rec-card">
+          <p class="rec-quote">Being humble and an intelligent software engineer is an excellent combination to achieve greatness.</p>
+          <p class="rec-name">Aditya Bhatt</p>
+          <p class="rec-title">AI/ML Engineer · Morgan Stanley</p>
+        </div>
+
+        <div class="rec-card">
+          <p class="rec-quote">Atharva is a focused and determined individual and a great team worker.</p>
+          <p class="rec-name">Sangeeta Gupta</p>
+          <p class="rec-title">Toyota Financial Services</p>
+        </div>
+
+      </div>
+
+      <div class="carousel-controls">
+        <button class="carousel-btn" onclick="recPrev()" aria-label="Previous">&#8592;</button>
+        <button class="carousel-btn" onclick="recNext()" aria-label="Next">&#8594;</button>
+        <div class="carousel-dots" id="rec-dots"></div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  (function() {
+    const total = 4;
+    let cur = 0;
+    const track = document.getElementById('rec-track');
+    const dotsEl = document.getElementById('rec-dots');
+
+    // Build dots
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement('div');
+      d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      d.onclick = () => goTo(i);
+      dotsEl.appendChild(d);
+    }
+
+    function goTo(n) {
+      cur = (n + total) % total;
+      track.style.transform = `translateX(-${cur * 100}%)`;
+      dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) =>
+        d.classList.toggle('active', i === cur));
+    }
+    window.recNext = () => goTo(cur + 1);
+    window.recPrev = () => goTo(cur - 1);
+
+    // Auto-advance every 5s
+    let timer = setInterval(() => recNext(), 5000);
+    track.parentElement.addEventListener('mouseenter', () => clearInterval(timer));
+    track.parentElement.addEventListener('mouseleave', () => {
+      clearInterval(timer);
+      timer = setInterval(() => recNext(), 5000);
+    });
+  })();
+  </script>
+
+  <div class="section-divider"></div>
+
+  <!-- GAME -->
+  <section id="game" style="background: var(--bg);">
+    <p class="section-label fade-up">Play a hand</p>
+    <h2 class="section-title fade-up">Blackjack</h2>
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:2rem;max-width:500px;" class="fade-up">
+      Since you made it this far, let's play. Standard rules — dealer stands on 17. Playing for pride.
+    </p>
+
+    <div id="bj" class="fade-up" style="max-width:560px;">
+      <style>
+        #bj { user-select: none; }
+        .bj-label {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.68rem; letter-spacing: 0.2em;
+          color: var(--muted); text-transform: uppercase;
+          margin-bottom: 0.6rem;
+        }
+        .bj-hand {
+          display: flex; flex-wrap: wrap; gap: 0.5rem;
+          min-height: 88px; margin-bottom: 1.2rem;
+          align-items: flex-start;
+        }
+        .bj-card {
+          width: 58px; height: 84px;
+          background: var(--cream); border-radius: 5px;
+          display: flex; flex-direction: column;
+          justify-content: space-between; padding: 5px 6px;
+          font-size: 0.9rem; font-weight: 700;
+          line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+          color: #1a1a18;
+        }
+        .bj-card.red { color: #c0392b; }
+        .bj-card.back {
+          background: var(--bg3);
+          border: 1px solid var(--border);
+          justify-content: center; align-items: center;
+          font-size: 1.4rem; color: var(--gold);
+        }
+        .bj-card .suit-center { text-align: center; font-size: 1.3rem; }
+        .bj-score {
+          font-family: 'Playfair Display', serif;
+          font-size: 1.1rem; color: var(--cream);
+          margin-bottom: 1.8rem;
+        }
+        .bj-score span { color: var(--gold); }
+        .bj-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .bj-btn {
+          padding: 0.6rem 1.6rem;
+          border: 1px solid var(--gold); background: transparent;
+          color: var(--gold); font-family: 'Inter', sans-serif;
+          font-size: 0.78rem; letter-spacing: 0.15em;
+          text-transform: uppercase; cursor: pointer;
+          transition: background 0.2s, color 0.2s;
+        }
+        .bj-btn:hover:not(:disabled) { background: var(--gold); color: var(--bg); }
+        .bj-btn:disabled { opacity: 0.3; cursor: default; border-color: var(--border); color: var(--muted); }
+        .bj-btn.ghost { border-color: var(--border); color: var(--muted); }
+        .bj-btn.ghost:hover:not(:disabled) { background: var(--bg3); color: var(--text); }
+        .bj-result {
+          font-family: 'Playfair Display', serif;
+          font-size: 1.4rem; min-height: 2rem;
+          margin-bottom: 1rem;
+        }
+        .bj-result.win  { color: var(--gold); }
+        .bj-result.lose { color: #c0392b; }
+        .bj-result.push { color: var(--muted); }
+        .bj-record {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.7rem; color: var(--muted);
+          letter-spacing: 0.1em;
+        }
+      </style>
+
+      <div class="bj-label">Dealer</div>
+      <div class="bj-hand" id="bj-dealer"></div>
+      <div class="bj-score" id="bj-dscore"></div>
+
+      <div class="bj-label">You</div>
+      <div class="bj-hand" id="bj-player"></div>
+      <div class="bj-score" id="bj-pscore"></div>
+
+      <div class="bj-result" id="bj-result"></div>
+
+      <div class="bj-actions">
+        <button class="bj-btn" id="bj-hit"   onclick="bjHit()"   disabled>Hit</button>
+        <button class="bj-btn" id="bj-stand" onclick="bjStand()" disabled>Stand</button>
+        <button class="bj-btn ghost" id="bj-deal" onclick="bjDeal()">Deal</button>
+      </div>
+      <div class="bj-record" id="bj-record">W: 0 &nbsp; L: 0 &nbsp; P: 0</div>
+    </div>
+  </section>
+
+  <script>
+  (function() {
+    const SUITS = ['♠','♥','♦','♣'];
+    const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+    const RED = new Set(['♥','♦']);
+    let deck=[], dealer=[], player=[], gameOver=true;
+    let wins=0, losses=0, pushes=0;
+
+    function newDeck() {
+      deck=[];
+      for (let s of SUITS) for (let r of RANKS) deck.push({r,s});
+      for (let i=deck.length-1;i>0;i--) { let j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
+    }
+    function draw() { return deck.pop(); }
+    function val(hand) {
+      let v=0, aces=0;
+      for (let c of hand) {
+        if (c.r==='A') { v+=11; aces++; }
+        else if (['J','Q','K'].includes(c.r)) v+=10;
+        else v+=parseInt(c.r);
+      }
+      while (v>21 && aces>0) { v-=10; aces--; }
+      return v;
+    }
+    function cardEl(c, hidden=false) {
+      const d=document.createElement('div');
+      if (hidden) { d.className='bj-card back'; d.textContent='🂠'; return d; }
+      d.className='bj-card'+(RED.has(c.s)?' red':'');
+      d.innerHTML=`<div>${c.r}</div><div class="suit-center">${c.s}</div><div style="transform:rotate(180deg)">${c.r}</div>`;
+      return d;
+    }
+    function render(hideDealer=false) {
+      const dEl=document.getElementById('bj-dealer');
+      const pEl=document.getElementById('bj-player');
+      dEl.innerHTML=''; pEl.innerHTML='';
+      dealer.forEach((c,i)=> dEl.appendChild(cardEl(c, hideDealer && i===1)));
+      player.forEach(c=> pEl.appendChild(cardEl(c)));
+      const pv=val(player);
+      document.getElementById('bj-pscore').innerHTML=`Score: <span>${pv}</span>${pv===21&&player.length===2?' &nbsp;— Blackjack!':''}`;
+      if (hideDealer) {
+        document.getElementById('bj-dscore').innerHTML=`Score: <span>?</span>`;
+      } else {
+        const dv=val(dealer);
+        document.getElementById('bj-dscore').innerHTML=`Score: <span>${dv}</span>`;
+      }
+    }
+    function setResult(msg, cls) {
+      const el=document.getElementById('bj-result');
+      el.textContent=msg; el.className='bj-result '+cls;
+    }
+    function updateRecord() {
+      document.getElementById('bj-record').innerHTML=`W: ${wins} &nbsp; L: ${losses} &nbsp; P: ${pushes}`;
+    }
+    function endGame() {
+      gameOver=true;
+      document.getElementById('bj-hit').disabled=true;
+      document.getElementById('bj-stand').disabled=true;
+      render(false);
+      const pv=val(player), dv=val(dealer);
+      if (pv>21)              { losses++; setResult('Bust. You lose.','lose'); }
+      else if (dv>21)         { wins++;   setResult('Dealer busts. You win!','win'); }
+      else if (pv>dv)         { wins++;   setResult('You win!','win'); }
+      else if (pv<dv)         { losses++; setResult('Dealer wins.','lose'); }
+      else                    { pushes++; setResult('Push.','push'); }
+      updateRecord();
+    }
+    window.bjDeal=function() {
+      newDeck(); dealer=[draw(),draw()]; player=[draw(),draw()];
+      gameOver=false;
+      setResult('','');
+      render(true);
+      document.getElementById('bj-hit').disabled=false;
+      document.getElementById('bj-stand').disabled=false;
+      // check natural blackjack
+      if (val(player)===21) { bjStand(); }
+    };
+    window.bjHit=function() {
+      if (gameOver) return;
+      player.push(draw()); render(true);
+      if (val(player)>=21) bjStand();
+    };
+    window.bjStand=function() {
+      if (gameOver) return;
+      document.getElementById('bj-hit').disabled=true;
+      document.getElementById('bj-stand').disabled=true;
+      render(false);
+      // dealer draws to 17
+      function dealerStep() {
+        if (val(dealer)<17) {
+          setTimeout(()=>{ dealer.push(draw()); render(false); dealerStep(); },400);
+        } else { setTimeout(endGame,400); }
+      }
+      dealerStep();
+    };
+  })();
+  </script>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-inner fade-up">
+      <p class="section-label" style="text-align:center">Say hello</p>
+      <h2 class="contact-title">Let's talk</h2>
+      <p class="contact-sub">
+        Opportunities, coffee recommendations, watch recommendations, poker strategy debates, Porsche
+        hot takes — all equally welcome.
+      </p>
+      <div class="contact-links">
+        <a class="contact-link" href="mailto:contact@atharvap.me">✉ Opportunities</a>
+        <a class="contact-link" href="mailto:hello@atharvap.me">✉ General</a>
+        <a class="contact-link" href="https://linkedin.com/in/athuphul" target="_blank" rel="noopener">in LinkedIn</a>
+        <a class="contact-link" href="https://github.com/athuphul" target="_blank" rel="noopener">{ } GitHub</a>
+        <a class="contact-link" href="https://medium.com/@athuphul" target="_blank" rel="noopener">✍ Blog</a>
+        <a class="contact-link" href="https://devpost.com/AtharvaPhulambrikar" target="_blank" rel="noopener">⌨ Devpost</a>
+        <a class="contact-link" href="https://soundcloud.com/atharva-phulambrikar" target="_blank" rel="noopener">♪ SoundCloud</a>
+      </div>
+      <hr class="footer-rule" />
+      <p class="footer-note">
+        &copy; 2026 Atharva Phulambrikar &nbsp;·&nbsp; San Francisco, CA &nbsp;·&nbsp;
+        ♠♥♦♣
+      </p>
+    </div>
+  </section>
+
+  <!-- MONTY HALL -->
+  <section id="montyhall" style="background: var(--bg2); border-top: 1px solid var(--border);">
+    <p class="section-label fade-up">You made it this far</p>
+    <h2 class="section-title fade-up">Win your own 911</h2>
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:0.6rem;max-width:560px;" class="fade-up">
+      Three doors. One 911. Two pigs. Pick a door — then decide if you want to switch after I show you a pig.
+      The math might surprise you.
+    </p>
+    <p style="color:var(--muted);font-size:0.78rem;margin-bottom:2rem;max-width:560px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;" class="fade-up">
+      Hint: track your switch vs. stay record over time. Or read
+      <a href="https://athuphul.medium.com/deeply-understanding-the-monty-hall-problem-more-than-just-math-i-promise-4588c2803903" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-dim);">why the math works</a>
+      first — I wrote about it.
+    </p>
+
+    <div id="mh" class="fade-up" style="max-width:580px;">
+      <style>
+        #mh { user-select: none; }
+
+        .mh-doors {
+          display: flex; gap: 1.2rem; margin-bottom: 2rem;
+        }
+        .mh-door {
+          flex: 1; aspect-ratio: 9/14; max-width: 160px;
+          background: var(--bg3); border: 2px solid var(--border);
+          border-radius: 6px 6px 0 0;
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center;
+          cursor: pointer; position: relative;
+          transition: border-color 0.2s, transform 0.2s;
+          font-size: 3rem; overflow: hidden;
+        }
+        .mh-door:hover:not(.mh-door--locked) {
+          border-color: var(--gold-dim);
+          transform: translateY(-4px);
+        }
+        .mh-door--picked  { border-color: var(--gold); }
+        .mh-door--locked  { cursor: default; }
+        .mh-door--open    { border-color: var(--border); }
+        .mh-door--win     { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+        .mh-door--lose    { border-color: #c0392b;     background: rgba(192,57,43,0.06); }
+
+        .mh-door-num {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.65rem; letter-spacing: 0.2em;
+          color: var(--muted); text-transform: uppercase;
+          position: absolute; bottom: 0.5rem;
+        }
+        .mh-door-label {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.6rem; letter-spacing: 0.15em;
+          color: var(--muted); text-transform: uppercase;
+          position: absolute; top: 0.5rem;
+          opacity: 0; transition: opacity 0.3s;
+        }
+        .mh-door--open .mh-door-label,
+        .mh-door--win  .mh-door-label,
+        .mh-door--lose .mh-door-label { opacity: 1; }
+
+        .mh-phase {
+          font-family: 'Playfair Display', serif;
+          font-size: 1rem; color: var(--text);
+          margin-bottom: 1.2rem; min-height: 1.6rem;
+        }
+        .mh-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .mh-btn {
+          padding: 0.6rem 1.6rem;
+          border: 1px solid var(--gold); background: transparent;
+          color: var(--gold); font-family: 'Inter', sans-serif;
+          font-size: 0.78rem; letter-spacing: 0.15em;
+          text-transform: uppercase; cursor: pointer;
+          transition: background 0.2s, color 0.2s;
+        }
+        .mh-btn:hover:not(:disabled) { background: var(--gold); color: var(--bg); }
+        .mh-btn:disabled { opacity: 0.3; cursor: default; border-color: var(--border); color: var(--muted); }
+        .mh-btn.ghost { border-color: var(--border); color: var(--muted); }
+        .mh-btn.ghost:hover:not(:disabled) { background: var(--bg3); color: var(--text); }
+
+        .mh-result {
+          font-family: 'Playfair Display', serif;
+          font-size: 1.4rem; min-height: 2rem;
+          margin-bottom: 1rem;
+        }
+        .mh-result.win  { color: var(--gold); }
+        .mh-result.lose { color: #c0392b; }
+
+        .mh-stats {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.7rem; color: var(--muted);
+          letter-spacing: 0.08em; line-height: 1.9;
+        }
+        .mh-stats span { color: var(--text); }
+      </style>
+
+      <div class="mh-phase" id="mh-phase">Pick a door to start.</div>
+
+      <div class="mh-doors" id="mh-doors">
+        <div class="mh-door" id="mh-d0" onclick="mhPick(0)">
+          🚪
+          <span class="mh-door-label" id="mh-lbl0"></span>
+          <span class="mh-door-num">Door 1</span>
+        </div>
+        <div class="mh-door" id="mh-d1" onclick="mhPick(1)">
+          🚪
+          <span class="mh-door-label" id="mh-lbl1"></span>
+          <span class="mh-door-num">Door 2</span>
+        </div>
+        <div class="mh-door" id="mh-d2" onclick="mhPick(2)">
+          🚪
+          <span class="mh-door-label" id="mh-lbl2"></span>
+          <span class="mh-door-num">Door 3</span>
+        </div>
+      </div>
+
+      <div class="mh-result" id="mh-result"></div>
+
+      <div class="mh-actions">
+        <button class="mh-btn" id="mh-switch" onclick="mhChoose(true)"  disabled>Switch</button>
+        <button class="mh-btn ghost" id="mh-stay"   onclick="mhChoose(false)" disabled>Stay</button>
+        <button class="mh-btn ghost" id="mh-new"    onclick="mhNew()">New Game</button>
+      </div>
+
+      <div class="mh-stats" id="mh-stats">
+        W: <span id="mh-w">0</span> &nbsp; L: <span id="mh-l">0</span>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        Switched: <span id="mh-sw">0</span>W / <span id="mh-sl">0</span>L
+        &nbsp;&nbsp;
+        Stayed: <span id="mh-kw">0</span>W / <span id="mh-kl">0</span>L
+      </div>
+    </div>
+  </section>
+
+  <script>
+  (function() {
+    // state
+    let carDoor, picked, revealed;
+    let totalW=0, totalL=0;
+    let switchW=0, switchL=0, stayW=0, stayL=0;
+    const PHASE = {PICK:'PICK', SWITCH:'SWITCH', DONE:'DONE'};
+    let phase = PHASE.PICK;
+
+    function doorEl(i)   { return document.getElementById('mh-d'+i); }
+    function lblEl(i)    { return document.getElementById('mh-lbl'+i); }
+    function icon(i)     { return i === carDoor ? '🏎️' : '🐷'; }
+
+    function resetDoors() {
+      for (let i=0;i<3;i++) {
+        const d = doorEl(i);
+        d.className = 'mh-door';
+        d.onclick = () => mhPick(i);
+        // reset inner text to closed door, preserve label + num spans
+        d.childNodes[0].textContent = '🚪';
+        lblEl(i).textContent = '';
+      }
+    }
+
+    function openDoor(i, isResult) {
+      const d = doorEl(i);
+      d.childNodes[0].textContent = icon(i);
+      lblEl(i).textContent = i === carDoor ? '911' : 'pig';
+      if (isResult) {
+        d.classList.add(i === carDoor ? 'mh-door--win' : 'mh-door--lose');
+      } else {
+        d.classList.add('mh-door--open');
+      }
+      d.classList.add('mh-door--locked');
+      d.onclick = null;
+    }
+
+    function setPhase(txt) { document.getElementById('mh-phase').textContent = txt; }
+    function setResult(txt, cls) {
+      const el = document.getElementById('mh-result');
+      el.textContent = txt; el.className = 'mh-result ' + cls;
+    }
+    function updateStats() {
+      document.getElementById('mh-w').textContent  = totalW;
+      document.getElementById('mh-l').textContent  = totalL;
+      document.getElementById('mh-sw').textContent = switchW;
+      document.getElementById('mh-sl').textContent = switchL;
+      document.getElementById('mh-kw').textContent = stayW;
+      document.getElementById('mh-kl').textContent = stayL;
+    }
+
+    window.mhNew = function() {
+      carDoor = Math.floor(Math.random() * 3);
+      picked = null; revealed = null;
+      phase = PHASE.PICK;
+      resetDoors();
+      setPhase('Pick a door.');
+      setResult('', '');
+      document.getElementById('mh-switch').disabled = true;
+      document.getElementById('mh-stay').disabled   = true;
+    };
+
+    window.mhPick = function(i) {
+      if (phase !== PHASE.PICK) return;
+      picked = i;
+      phase = PHASE.SWITCH;
+
+      // mark picked
+      for (let j=0;j<3;j++) doorEl(j).classList.remove('mh-door--picked');
+      doorEl(i).classList.add('mh-door--picked','mh-door--locked');
+      doorEl(i).onclick = null;
+
+      // host reveals a goat door (not picked, not car)
+      const candidates = [0,1,2].filter(j => j !== picked && j !== carDoor);
+      revealed = candidates[Math.floor(Math.random() * candidates.length)];
+      openDoor(revealed, false);
+
+      // lock the revealed door for other clicks too
+      for (let j=0;j<3;j++) {
+        if (j !== revealed && j !== picked) {
+          // this is the remaining unchosen closed door — keep it clickable? No, use buttons.
+          doorEl(j).classList.add('mh-door--locked');
+          doorEl(j).onclick = null;
+        }
+      }
+
+      setPhase('A pig! Now — switch or stay?');
+      document.getElementById('mh-switch').disabled = false;
+      document.getElementById('mh-stay').disabled   = false;
+    };
+
+    window.mhChoose = function(didSwitch) {
+      if (phase !== PHASE.SWITCH) return;
+      phase = PHASE.DONE;
+      document.getElementById('mh-switch').disabled = true;
+      document.getElementById('mh-stay').disabled   = true;
+
+      const finalDoor = didSwitch
+        ? [0,1,2].find(j => j !== picked && j !== revealed)
+        : picked;
+
+      const won = finalDoor === carDoor;
+
+      // reveal all doors
+      for (let i=0;i<3;i++) {
+        if (i !== revealed) openDoor(i, true);
+      }
+
+      if (won) {
+        totalW++; didSwitch ? switchW++ : stayW++;
+        setResult(didSwitch ? 'You switched — and won the 911! 🏎️' : 'You stayed — and won the 911! 🏎️', 'win');
+        setPhase('');
+      } else {
+        totalL++; didSwitch ? switchL++ : stayL++;
+        setResult(didSwitch ? 'You switched — pig. 🐷' : 'You stayed — pig. 🐷', 'lose');
+        setPhase('');
+      }
+      updateStats();
+    };
+
+    // kick off first game
+    mhNew();
+  })();
+  </script>
+
+  <script>
+    // Intersection Observer for fade-up animations
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+    // Staggered hero animations on load
+    document.querySelectorAll('.hero .fade-up').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 150 + i * 120);
+    });
+  </script>
+</body>
+</html>
