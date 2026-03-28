@@ -327,6 +327,7 @@
       <li><a href="#interests">Interests</a></li>
       <li><a href="#recs">Recs</a></li>
       <li><a href="#games">Arcade</a></li>
+      <li><a href="#writing">Writing</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
@@ -477,6 +478,7 @@
         <div class="hobby-detail">
           Seagulls through and through. I watched De Zerbi's attacking football with genuine joy, and I'm not apologizing for it. I also play rec soccer — nowhere near Premier League level, but the love for the game is real.
         </div>
+        <div class="bha-results" id="bha-results"></div>
       </div>
 
       <div class="hobby-card fade-up">
@@ -1291,6 +1293,191 @@
   })();
 
   </script>
+
+  <div class="section-divider"></div>
+
+  <!-- WRITING -->
+  <section id="writing" style="background: var(--bg2);">
+    <p class="section-label fade-up">From the blog</p>
+    <h2 class="section-title fade-up">Writing</h2>
+
+    <style>
+      .writing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.6rem;
+        margin-top: 0.5rem;
+        max-width: 960px;
+      }
+      .writing-card {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        padding: 1.8rem;
+        transition: border-color 0.2s;
+        text-decoration: none;
+        display: block;
+        color: inherit;
+      }
+      .writing-card:hover { border-color: var(--gold-dim); }
+      .writing-tag {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.62rem; letter-spacing: 0.2em;
+        color: var(--gold); text-transform: uppercase;
+        margin-bottom: 0.7rem;
+      }
+      .writing-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.05rem; color: var(--cream);
+        line-height: 1.5; margin-bottom: 0.8rem;
+      }
+      .writing-excerpt {
+        font-size: 0.82rem; color: var(--muted);
+        line-height: 1.65;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .writing-meta {
+        margin-top: 1.2rem;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.65rem; color: var(--muted);
+        letter-spacing: 0.08em;
+      }
+      .writing-more-wrap { margin-top: 2.5rem; }
+      .writing-more-link {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem; letter-spacing: 0.15em;
+        color: var(--gold); text-decoration: none;
+        border-bottom: 1px solid var(--gold-dim);
+        padding-bottom: 2px;
+        transition: color 0.2s;
+      }
+      .writing-more-link:hover { color: var(--cream); }
+      .writing-placeholder {
+        color: var(--muted); font-size: 0.85rem;
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      /* Brighton ticker */
+      .bha-results {
+        margin-top: 1rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid var(--border);
+      }
+      .bha-ticker-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.6rem; letter-spacing: 0.18em;
+        color: var(--muted); text-transform: uppercase;
+        margin-bottom: 0.55rem;
+      }
+      .bha-results-row {
+        display: flex; align-items: center; gap: 0.55rem;
+        margin-bottom: 0.35rem; font-size: 0.75rem;
+      }
+      .bha-pill {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 20px; height: 20px; border-radius: 3px;
+        font-size: 0.62rem; font-weight: 700;
+        font-family: 'JetBrains Mono', monospace;
+        flex-shrink: 0;
+      }
+      .bha-pill.W { background: #1e4d35; color: #6fcf97; }
+      .bha-pill.D { background: #333330; color: var(--muted); }
+      .bha-pill.L { background: #4d1e28; color: #eb5757; }
+      .bha-score {
+        font-family: 'JetBrains Mono', monospace;
+        color: var(--text); font-size: 0.72rem; min-width: 28px;
+      }
+      .bha-opp { color: var(--muted); }
+      .bha-venue { opacity: 0.45; font-size: 0.65rem; }
+    </style>
+
+    <div class="writing-grid fade-up" id="writing-grid">
+      <div class="writing-placeholder">Loading articles…</div>
+    </div>
+
+    <div class="writing-more-wrap fade-up">
+      <a href="https://medium.com/@athuphul" target="_blank" rel="noopener" class="writing-more-link">All articles on Medium →</a>
+    </div>
+  </section>
+
+  <script>
+  // ── Brighton results ticker ──────────────────────────────────────────────
+  (function () {
+    const el = document.getElementById('bha-results');
+    if (!el) return;
+
+    function render(matches) {
+      el.innerHTML = '<div class="bha-ticker-label">Recent Results</div>';
+      matches.slice(0, 5).forEach(function (m) {
+        const hs = parseInt(m.intHomeScore, 10);
+        const as = parseInt(m.intAwayScore, 10);
+        if (isNaN(hs) || isNaN(as)) return;
+        const bhaHome = m.strHomeTeam.toLowerCase().includes('brighton');
+        const bhaScore = bhaHome ? hs : as;
+        const oppScore = bhaHome ? as : hs;
+        const opp = bhaHome ? m.strAwayTeam : m.strHomeTeam;
+        const result = bhaScore > oppScore ? 'W' : bhaScore === oppScore ? 'D' : 'L';
+        const venue = bhaHome ? 'H' : 'A';
+        const row = document.createElement('div');
+        row.className = 'bha-results-row';
+        row.innerHTML =
+          '<span class="bha-pill ' + result + '">' + result + '</span>' +
+          '<span class="bha-score">' + bhaScore + '–' + oppScore + '</span>' +
+          '<span class="bha-opp">vs ' + opp + ' <span class="bha-venue">(' + venue + ')</span></span>';
+        el.appendChild(row);
+      });
+    }
+
+    fetch('https://www.thesportsdb.com/api/v1/json/123/eventslast.php?id=133619')
+      .then(function (r) { return r.json(); })
+      .then(function (data) { if (data && data.results) render(data.results); })
+      .catch(function () { /* silently fail */ });
+  })();
+
+  // ── Medium blog posts ────────────────────────────────────────────────────
+  (function () {
+    const grid = document.getElementById('writing-grid');
+    if (!grid) return;
+
+    const RSS = encodeURIComponent('https://medium.com/feed/@athuphul');
+    fetch('https://api.rss2json.com/v1/api.json?rss_url=' + RSS)
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.items || data.items.length === 0) {
+          grid.innerHTML = '<div class="writing-placeholder">No articles found.</div>';
+          return;
+        }
+        grid.innerHTML = '';
+        data.items.slice(0, 3).forEach(function (item) {
+          const date = new Date(item.pubDate).toLocaleDateString('en-US',
+            { year: 'numeric', month: 'short', day: 'numeric' });
+          const tmp = document.createElement('div');
+          tmp.innerHTML = item.description || '';
+          const text = (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+          const excerpt = text.length > 180 ? text.slice(0, 180) + '…' : text;
+          const readTime = Math.max(1, Math.round(text.split(/\s+/).length / 200));
+          const card = document.createElement('a');
+          card.className = 'writing-card';
+          card.href = item.link;
+          card.target = '_blank';
+          card.rel = 'noopener';
+          card.innerHTML =
+            '<div class="writing-tag">Medium</div>' +
+            '<div class="writing-title">' + item.title + '</div>' +
+            '<div class="writing-excerpt">' + excerpt + '</div>' +
+            '<div class="writing-meta">' + date + ' &nbsp;·&nbsp; ' + readTime + ' min read</div>';
+          grid.appendChild(card);
+        });
+      })
+      .catch(function () {
+        grid.innerHTML = '<div class="writing-placeholder">Could not load articles.</div>';
+      });
+  })();
+  </script>
+
+  <div class="section-divider"></div>
 
   <!-- CONTACT -->
   <section id="contact">
